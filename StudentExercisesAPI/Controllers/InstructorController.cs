@@ -30,7 +30,7 @@ namespace StudentInstructorsAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT i.Id, i.FirstName, i.LastName, i.SlackHandle, i.Specialty, i.CohortId, c.CohortName
+                    cmd.CommandText = @"SELECT i.Id, i.FirstName, i.LastName, i.SlackHandle,  i.CohortId, c.CohortName
                                                 FROM Instructor i LEFT JOIN Cohort c ON c.Id = i.CohortId";
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -44,12 +44,13 @@ namespace StudentInstructorsAPI.Controllers
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-                            Specialty = reader.GetString(reader.GetOrdinal("Specialty")),
                             CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
                             Cohort = new Cohort()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                                CohortName = reader.GetString(reader.GetOrdinal("CohortName"))
+                                CohortName = reader.GetString(reader.GetOrdinal("CohortName")),
+                                Students = new List<Student>(),
+                                Instructors = new List<Instructor>()
                             }
                         };
                         instructors.Add(instructor);
@@ -70,7 +71,7 @@ namespace StudentInstructorsAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT i.Id, i.FirstName, i.LastName, i.SlackHandle, i.Specialty, i.CohortId, c.CohortName
+                    cmd.CommandText = @"SELECT i.Id, i.FirstName, i.LastName, i.SlackHandle,  i.CohortId, c.CohortName
                                                 FROM Instructor i LEFT JOIN Cohort c ON c.Id = i.CohortId
                                          WHERE i.id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
@@ -85,12 +86,13 @@ namespace StudentInstructorsAPI.Controllers
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             SlackHandle = reader.GetString(reader.GetOrdinal("SlackHandle")),
-                            Specialty = reader.GetString(reader.GetOrdinal("Specialty")),
                             CohortId = reader.GetInt32(reader.GetOrdinal("CohortId")),
                             Cohort = new Cohort()
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("id")),
-                                CohortName = reader.GetString(reader.GetOrdinal("CohortName"))
+                                CohortName = reader.GetString(reader.GetOrdinal("CohortName")),
+                                Students = new List<Student>(),
+                                Instructors = new List<Instructor>()
                             }
                         };
                     }
@@ -115,12 +117,11 @@ namespace StudentInstructorsAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"INSERT INTO Instructor (FirstName, LastName, SlackHandle, Specialty, CohortId)
-                                        VALUES (@FirstName, @LastName, @SlackHandle, @Specialty, @CohortId)";
+                    cmd.CommandText = @"INSERT INTO Instructor (FirstName, LastName, SlackHandle, CohortId)
+                                        VALUES (@FirstName, @LastName, @SlackHandle, @CohortId)";
                     cmd.Parameters.Add(new SqlParameter("@FirstName", newInstructor.FirstName));
                     cmd.Parameters.Add(new SqlParameter("@LastName", newInstructor.LastName));
                     cmd.Parameters.Add(new SqlParameter("@SlackHandle", newInstructor.SlackHandle));
-                    cmd.Parameters.Add(new SqlParameter("@Specialty", newInstructor.Specialty));
                     cmd.Parameters.Add(new SqlParameter("@CohortId", newInstructor.CohortId));
 
                     cmd.ExecuteNonQuery();
@@ -130,14 +131,45 @@ namespace StudentInstructorsAPI.Controllers
 
         // PUT: api/Instructor/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void UpdateInstructor(int id, [FromBody] Instructor instructor)
         {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Instructor 
+                            SET FirstName = @FirstName,
+                             LastName = @LastName,
+                             SlackHandle = @SlackHandle,
+                             CohortId = @CohortId
+                                    WHERE Id = @Id";
+                    cmd.Parameters.Add(new SqlParameter("@FirstName", instructor.FirstName));
+                    cmd.Parameters.Add(new SqlParameter("@LastName", instructor.LastName));
+                    cmd.Parameters.Add(new SqlParameter("@SlackHandle", instructor.SlackHandle));
+                    cmd.Parameters.Add(new SqlParameter("@CohortId", instructor.CohortId));
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public void DeleteInstructor(int id)
         {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM Instructor WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
         }
     }
 }

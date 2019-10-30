@@ -23,7 +23,7 @@ namespace StudentExercisesAPI.Controllers
 
         // GET: api/Exercise
         [HttpGet]
-        public IEnumerable<Exercise> Get()
+        public IEnumerable<Exercise> GetExercises()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -55,7 +55,7 @@ namespace StudentExercisesAPI.Controllers
 
         // GET: api/Exercise/5
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public IActionResult GetExercise(int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {

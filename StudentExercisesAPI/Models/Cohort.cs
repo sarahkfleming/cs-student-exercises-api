@@ -7,7 +7,7 @@ namespace StudentExercises
     {
         public int Id { get; set; }
         public string CohortName { get; set; }
-        public List<Student> students { get; set; }  = new List<Student>();
-        public List<Instructor> instructors { get; set; }  = new List<Instructor>();
+        public List<Student> Students { get; set; }  = new List<Student>();
+        public List<Instructor> Instructors { get; set; }  = new List<Instructor>();
     }
 }
