@@ -115,8 +115,7 @@ namespace StudentExercisesAPI.Controllers
                                 CohortName = reader.GetString(reader.GetOrdinal("CohortName")),
                                 Students = new List<Student>(),
                                 Instructors = new List<Instructor>()
-                            },
-                            Exercises = new List<Exercise>()
+                            }
                         };
                     }
                     reader.Close();
