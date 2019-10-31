@@ -118,8 +118,7 @@ namespace StudentExercisesAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"UPDATE Exercise
-                                           SET ExerciseName = @ExerciseName
-                                           SET ProgrammingLanguage = @ProgrammingLanguage
+                                           SET ExerciseName = @ExerciseName, ProgrammingLanguage = @ProgrammingLanguage
                                          WHERE Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@ExerciseName", exercise.ExerciseName));
                     cmd.Parameters.Add(new SqlParameter("@ProgrammingLanguage", exercise.ProgrammingLanguage));

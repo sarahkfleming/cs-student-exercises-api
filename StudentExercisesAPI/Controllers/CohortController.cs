@@ -66,6 +66,7 @@ namespace StudentExercisesAPI.Controllers
                     cmd.CommandText = @"SELECT Id, CohortName
                                                 FROM Cohort
                                     WHERE id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Cohort aCohort = null;
@@ -92,21 +93,58 @@ namespace StudentExercisesAPI.Controllers
         }
 
         //// POST: api/Cohort
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+        [HttpPost]
+        public void AddCohort([FromBody] Cohort cohort)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"INSERT INTO Cohort (CohortName)
+                                        VALUES (@CohortName)";
+                    cmd.Parameters.Add(new SqlParameter("@CohortName", cohort.CohortName));
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
         //// PUT: api/Cohort/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+        [HttpPut("{id}")]
+        public void UpdateCohort(int id, [FromBody] Cohort cohort)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Cohort
+                                           SET CohortName= @CohortName
+                                         WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@CohortName", cohort.CohortName));
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
 
         //// DELETE: api/ApiWithActions/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+        [HttpDelete("{id}")]
+        public void DeleteCohort(int id)
+        {
+            using (SqlConnection conn = new SqlConnection(_connectionString))
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = "DELETE FROM Cohort WHERE Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
 }
