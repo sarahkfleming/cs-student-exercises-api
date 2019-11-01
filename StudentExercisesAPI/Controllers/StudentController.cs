@@ -86,16 +86,20 @@ namespace StudentExercisesAPI.Controllers
 
         //// GET: api/Student/5
         [HttpGet("{id}")]
-        public IActionResult GetStudent(int id)
+        public async Task<IActionResult> GetStudent(int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT s.Id, s.FirstName, s.LastName, s.SlackHandle,  s.CohortId, c.CohortName
-                                                FROM Student s LEFT JOIN Cohort c ON c.Id = s.CohortId
-                                         WHERE s.id = @id";
+                    cmd.CommandText = @"
+                                        SELECT s.Id, s.FirstName, s.LastName, s.SlackHandle, s.CohortId,
+					                                    c.CohortName, se.ExerciseId, e.ExerciseName, e.ProgrammingLanguage
+                                            FROM Student s INNER JOIN Cohort c ON s.CohortId = c.Id
+					                                    LEFT JOIN StudentExercise se ON se.StudentId = s.Id
+					                                    INNER JOIN Exercise e ON se.ExerciseId = e.Id
+                                            WHERE s.id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -117,15 +121,27 @@ namespace StudentExercisesAPI.Controllers
                                 Instructors = new List<Instructor>()
                             }
                         };
-                    }
-                    reader.Close();
 
-                    if (aStudent == null)
-                    {
-                        return NotFound();
+                        // Add exercise(s) to the students
+                        if (!reader.IsDBNull(reader.GetOrdinal("ExerciseId")))
+                        {
+                            Exercise anExercise = new Exercise()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("ExerciseId")),
+                                ExerciseName = reader.GetString(reader.GetOrdinal("ExerciseName")),
+                                ProgrammingLanguage = reader.GetString(reader.GetOrdinal("ProgrammingLanguage"))
+                            };
+                            aStudent.Exercises.Add(anExercise);
+                        }
                     }
+                        reader.Close();
 
-                    return Ok(aStudent);
+                        if (aStudent == null)
+                        {
+                            return NotFound();
+                        }
+
+                        return Ok(aStudent);
                 }
             }
         }

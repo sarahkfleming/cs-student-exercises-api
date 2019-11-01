@@ -23,15 +23,24 @@ namespace StudentExercisesAPI.Controllers
 
         // GET: api/Cohort
         [HttpGet]
-        public IEnumerable<Cohort> GetCohorts()
+        public async Task<IActionResult> GetCohorts()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = @"SELECT Id, CohortName
-                                                        FROM Cohort";
+                    cmd.CommandText = @"
+                                            SELECT c.Id, c.CohortName,
+                                                        s.Id, s.FirstName AS StudentFirstName, s.LastName AS StudentLastName, s.SlackHandle AS StudentSlackHandle, s.CohortId,
+                                                        i.FirstName AS InstructorFirstName, i.LastName AS InstructorLastName, i.SlackHandle AS InstructorSlackHandle,
+					                                    se.ExerciseId, e.ExerciseName, e.ProgrammingLanguage
+
+                                               FROM Cohort c LEFT JOIN Student s ON s.CohortId = c.Id
+                                                       LEFT JOIN Instructor i ON i.CohortId = c.Id
+                                                       LEFT JOIN StudentExercise se ON se.StudentId = s.Id
+                                                       INNER JOIN Exercise e ON se.ExerciseId = e.Id";
+
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Cohort> cohorts = new List<Cohort>();
@@ -49,7 +58,7 @@ namespace StudentExercisesAPI.Controllers
                     }
                     reader.Close();
 
-                    return cohorts;
+                    return Ok(cohorts);
                 }
             }
         }
@@ -76,8 +85,8 @@ namespace StudentExercisesAPI.Controllers
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("id")),
                             CohortName = reader.GetString(reader.GetOrdinal("CohortName")),
-                            Students = new List<Student>(),
-                            Instructors = new List<Instructor>()
+                            //Students = new List<Student>(),
+                            //Instructors = new List<Instructor>()
                         };
                     }
                     reader.Close();

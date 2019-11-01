@@ -8,7 +8,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using StudentExercises;
 
-namespace StudentInstructorsAPI.Controllers
+namespace StudentExercisesAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -23,7 +23,7 @@ namespace StudentInstructorsAPI.Controllers
 
         // GET: api/Instructor
         [HttpGet]
-        public IEnumerable<Instructor> GetInstructors()
+        public async Task<IActionResult> GetInstructors()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -57,14 +57,14 @@ namespace StudentInstructorsAPI.Controllers
                     }
                     reader.Close();
 
-                    return instructors;
+                    return Ok(instructors);
                 }
             }
         }
 
         // GET: api/Instructor/5
         [HttpGet("{id}")]
-        public IActionResult GetInstructor(int id)
+        public async Task<IActionResult> GetInstructor(int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
