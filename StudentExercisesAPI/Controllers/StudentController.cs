@@ -85,7 +85,7 @@ namespace StudentExercisesAPI.Controllers
         }
 
         //// GET: api/Student/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetStudent")]
         public async Task<IActionResult> GetStudent(int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
@@ -148,7 +148,7 @@ namespace StudentExercisesAPI.Controllers
 
         //// POST: api/Student
         [HttpPost]
-        public void AddStudent([FromBody] Student student)
+        public async Task<IActionResult> AddStudent([FromBody] Student student)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -156,20 +156,23 @@ namespace StudentExercisesAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Student (FirstName, LastName, SlackHandle, CohortId)
+                                        OUTPUT INSERTED.Id
                                         VALUES (@FirstName, @LastName, @SlackHandle, @CohortId)";
                     cmd.Parameters.Add(new SqlParameter("@FirstName", student.FirstName));
                     cmd.Parameters.Add(new SqlParameter("@LastName", student.LastName));
                     cmd.Parameters.Add(new SqlParameter("@SlackHandle", student.SlackHandle));
                     cmd.Parameters.Add(new SqlParameter("@CohortId", student.CohortId));
 
-                    cmd.ExecuteNonQuery();
+                    int newId = (int)cmd.ExecuteScalar();
+                    student.Id = newId;
+                    return CreatedAtRoute("GetStudent", new { id = newId }, student);
                 }
             }
         }
 
         //// PUT: api/Student/5
         [HttpPut("{id}")]
-        public void UpdateStudent(int id, [FromBody] Student student)
+        public async Task<IActionResult> UpdateStudent([FromRoute] int id, [FromBody] Student student)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -188,14 +191,19 @@ namespace StudentExercisesAPI.Controllers
                     cmd.Parameters.Add(new SqlParameter("@CohortId", student.CohortId));
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    cmd.ExecuteNonQuery();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
                 }
             }
         }
 
         //// DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void DeleteStudent(int id)
+        public async Task<IActionResult> DeleteStudent([FromRoute] int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -205,7 +213,12 @@ namespace StudentExercisesAPI.Controllers
                     cmd.CommandText = "DELETE FROM Student WHERE Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    cmd.ExecuteNonQuery();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
                 }
             }
         }

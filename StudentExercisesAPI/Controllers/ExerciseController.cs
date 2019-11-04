@@ -23,7 +23,7 @@ namespace StudentExercisesAPI.Controllers
 
         // GET: api/Exercise
         [HttpGet]
-        public IEnumerable<Exercise> GetExercises()
+        public async Task<IActionResult> GetExercises()
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -47,15 +47,15 @@ namespace StudentExercisesAPI.Controllers
 
                     reader.Close();
 
-                    return exercises;
+                    return Ok(exercises);
                 }
             }
 
         }
 
         // GET: api/Exercise/5
-        [HttpGet("{id}")]
-        public IActionResult GetExercise(int id)
+        [HttpGet("{id}", Name = "GetExercise")]
+        public async Task<IActionResult> GetExercise(int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -92,7 +92,7 @@ namespace StudentExercisesAPI.Controllers
 
         // POST: api/Exercise
         [HttpPost]
-        public void AddExercise([FromBody] Exercise newExercise)
+        public async Task<IActionResult> AddExercise([FromBody] Exercise newExercise)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -100,17 +100,21 @@ namespace StudentExercisesAPI.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"INSERT INTO Exercise (ExerciseName, ProgrammingLanguage)
+                                           OUTPUT INSERTED.Id
                                         VALUES (@ExerciseName, @ProgrammingLanguage)";
                     cmd.Parameters.Add(new SqlParameter("@ExerciseName", newExercise.ExerciseName));
                     cmd.Parameters.Add(new SqlParameter("@ProgrammingLanguage", newExercise.ProgrammingLanguage));
-                    cmd.ExecuteNonQuery();
+
+                    int newId = (int)cmd.ExecuteScalar();
+                    newExercise.Id = newId;
+                    return CreatedAtRoute("GetExercise", new { id = newId }, newExercise);
                 }
             }
         }
 
         // PUT: api/Exercise/5
         [HttpPut("{id}")]
-        public void UpdateExercise(int id, [FromBody] Exercise exercise)
+        public async Task<IActionResult> UpdateExercise([FromRoute] int id, [FromBody] Exercise exercise)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -124,14 +128,19 @@ namespace StudentExercisesAPI.Controllers
                     cmd.Parameters.Add(new SqlParameter("@ProgrammingLanguage", exercise.ProgrammingLanguage));
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    cmd.ExecuteNonQuery();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
                 }
             }
         }
 
         // DELETE: api/ApiWithActions/5
         [HttpDelete("{id}")]
-        public void DeleteExercise(int id)
+        public async Task<IActionResult> DeleteExercise([FromRoute] int id)
         {
             using (SqlConnection conn = new SqlConnection(_connectionString))
             {
@@ -141,7 +150,12 @@ namespace StudentExercisesAPI.Controllers
                     cmd.CommandText = "DELETE FROM Exercise WHERE Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                    cmd.ExecuteNonQuery();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected > 0)
+                    {
+                        return new StatusCodeResult(StatusCodes.Status204NoContent);
+                    }
+                    throw new Exception("No rows affected");
                 }
             }
         }
