@@ -29,7 +29,7 @@
 --	CONSTRAINT FK_Student_Cohort FOREIGN KEY(CohortId) REFERENCES Cohort(Id)
 --);
 --​
---CREATE TABLE StudentExercises (
+--CREATE TABLE StudentExercise (
 --    Id INTEGER NOT NULL PRIMARY KEY IDENTITY,
 --    StudentId INTEGER NOT NULL,
 --    ExerciseId INTEGER NOT NULL,
@@ -39,14 +39,14 @@
 ​
 -- 2. Populate each table with data. You should have 2-3 cohorts, 5-10 students, 4-8 instructors, 2-5 exercises and each student should be assigned 1-2 exercises.
 ​
---INSERT INTO Exercises (Name, Language) VALUES ('ChickenMonkey', 'JavaScript')
---INSERT INTO Exercises (Name, Language) VALUES ('Plan Your Heist', 'C#')
---INSERT INTO Exercises (Name, Language) VALUES ('Kneel Diamond', 'JavaScript')
---INSERT INTO Exercises (Name, Language) VALUES ('Departments and Employees', 'SQL')
+--INSERT INTO Exercise (Name, Language) VALUES ('ChickenMonkey', 'JavaScript')
+--INSERT INTO Exercise (Name, Language) VALUES ('Plan Your Heist', 'C#')
+--INSERT INTO Exercise (Name, Language) VALUES ('Kneel Diamond', 'JavaScript')
+--INSERT INTO Exercise (Name, Language) VALUES ('Departments and Employees', 'SQL')
 
---INSERT INTO Cohorts (CohortName) VALUES ('Day 34')
---INSERT INTO Cohorts (CohortName) VALUES ('Evening 09')
---INSERT INTO Cohorts (CohortName) VALUES ('Day 35')
+--INSERT INTO Cohort (CohortName) VALUES ('Day 34')
+--INSERT INTO Cohort (CohortName) VALUES ('Evening 09')
+--INSERT INTO Cohort (CohortName) VALUES ('Day 35')
 
 --INSERT INTO Students (FirstName, LastName, SlackHandle, CohortId) VALUES ('Sarah', 'Fleming', '@sarah', 1)
 --INSERT INTO Students (FirstName, LastName, SlackHandle, CohortId) VALUES ('Jennifer', 'Barnes', '@jenny', 2)
@@ -54,21 +54,22 @@
 --INSERT INTO Students (FirstName, LastName, SlackHandle, CohortId) VALUES ('Heather', 'Jackson', '@heather', 3)
 --INSERT INTO Students (FirstName, LastName, SlackHandle, CohortId) VALUES ('Annette', 'Browning', '@annette', 2)
 
---INSERT INTO Instructors(FirstName, LastName, SlackHandle, CohortId) VALUES ('Andy', 'Collins', '@andyc', 1)
---INSERT INTO Instructors(FirstName, LastName, SlackHandle, CohortId) VALUES ('Steve', 'Brownlee', '@coach', 2)
---INSERT INTO Instructors(FirstName, LastName, SlackHandle, CohortId) VALUES ('Bryan', 'Nilsen', '@bry5', 1)
---INSERT INTO Instructors(FirstName, LastName, SlackHandle, CohortId) VALUES ('Jenna', 'Solis', '@jenna', 1)
+--INSERT INTO Instructor (FirstName, LastName, SlackHandle, CohortId) VALUES ('Andy', 'Collins', '@andyc', 1)
+--INSERT INTO Instructor (FirstName, LastName, SlackHandle, CohortId) VALUES ('Steve', 'Brownlee', '@coach', 2)
+--INSERT INTO Instructor (FirstName, LastName, SlackHandle, CohortId) VALUES ('Bryan', 'Nilsen', '@bry5', 1)
+--INSERT INTO Instructor (FirstName, LastName, SlackHandle, CohortId) VALUES ('Jenna', 'Solis', '@jenna', 1)
 
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (1, 1)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (1, 2)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (2, 1)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (2, 3)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (3, 2)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (3, 3)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (4, 3)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (4, 4)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (5, 4)
---INSERT INTO StudentExercises (StudentId, ExerciseId) VALUES (5, 2)​
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (1, 1)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (1, 2)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (2, 1)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (2, 3)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (3, 2)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (3, 3)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (4, 3)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (4, 4)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (5, 4)
+--INSERT INTO StudentExercise (StudentId, ExerciseId) VALUES (5, 2)​
+
 ​
 -- 3. Write a query to return all student first and last names with their cohort's name.
 ​

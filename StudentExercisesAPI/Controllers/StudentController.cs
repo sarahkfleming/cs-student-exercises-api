@@ -35,7 +35,7 @@ namespace StudentExercisesAPI.Controllers
 					                                    c.CohortName, se.ExerciseId, e.ExerciseName, e.ProgrammingLanguage
                                             FROM Student s INNER JOIN Cohort c ON s.CohortId = c.Id
 					                                    LEFT JOIN StudentExercise se ON se.StudentId = s.Id
-					                                    INNER JOIN Exercise e ON se.ExerciseId = e.Id";
+					                                    LEFT JOIN Exercise e ON se.ExerciseId = e.Id";
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     Dictionary<int, Student> students = new Dictionary<int, Student>();
@@ -98,7 +98,7 @@ namespace StudentExercisesAPI.Controllers
 					                                    c.CohortName, se.ExerciseId, e.ExerciseName, e.ProgrammingLanguage
                                             FROM Student s INNER JOIN Cohort c ON s.CohortId = c.Id
 					                                    LEFT JOIN StudentExercise se ON se.StudentId = s.Id
-					                                    INNER JOIN Exercise e ON se.ExerciseId = e.Id
+					                                    LEFT JOIN Exercise e ON se.ExerciseId = e.Id
                                             WHERE s.id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
@@ -210,7 +210,8 @@ namespace StudentExercisesAPI.Controllers
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "DELETE FROM Student WHERE Id = @id";
+                    cmd.CommandText = "DELETE FROM StudentExercise WHERE StudentId = @id; DELETE FROM Student WHERE Id = @id";
+                                                        
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
                     int rowsAffected = cmd.ExecuteNonQuery();
